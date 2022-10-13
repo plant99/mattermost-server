@@ -45,7 +45,6 @@ func TestLicenseFeaturesSetDefaults(t *testing.T) {
 	CheckInt(t, *f.Users, 0)
 	CheckTrue(t, *f.LDAP)
 	CheckTrue(t, *f.LDAPGroups)
-	CheckTrue(t, *f.MFA)
 	CheckTrue(t, *f.GoogleOAuth)
 	CheckTrue(t, *f.Office365OAuth)
 	CheckTrue(t, *f.Compliance)
@@ -71,7 +70,6 @@ func TestLicenseFeaturesSetDefaults(t *testing.T) {
 	*f.FutureFeatures = false
 	*f.LDAP = true
 	*f.LDAPGroups = true
-	*f.MFA = true
 	*f.GoogleOAuth = true
 	*f.Office365OAuth = true
 	*f.Compliance = true
@@ -94,7 +92,6 @@ func TestLicenseFeaturesSetDefaults(t *testing.T) {
 	CheckInt(t, *f.Users, 300)
 	CheckTrue(t, *f.LDAP)
 	CheckTrue(t, *f.LDAPGroups)
-	CheckTrue(t, *f.MFA)
 	CheckTrue(t, *f.GoogleOAuth)
 	CheckTrue(t, *f.Office365OAuth)
 	CheckTrue(t, *f.Compliance)

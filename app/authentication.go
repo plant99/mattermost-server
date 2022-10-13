@@ -5,6 +5,7 @@ package app
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -199,6 +200,7 @@ func (a *App) CheckUserPostflightAuthenticationCriteria(user *model.User) *model
 }
 
 func (a *App) CheckUserMfa(user *model.User, token string) *model.AppError {
+	fmt.Println("checking mfa for", user.Id, user.MfaActive, *a.Config().ServiceSettings.EnableMultifactorAuthentication)
 	if !user.MfaActive || !*a.Config().ServiceSettings.EnableMultifactorAuthentication {
 		return nil
 	}

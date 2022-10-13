@@ -80,7 +80,6 @@ type Features struct {
 	Users                     *int  `json:"users"`
 	LDAP                      *bool `json:"ldap"`
 	LDAPGroups                *bool `json:"ldap_groups"`
-	MFA                       *bool `json:"mfa"`
 	GoogleOAuth               *bool `json:"google_oauth"`
 	Office365OAuth            *bool `json:"office365_oauth"`
 	OpenId                    *bool `json:"openid"`
@@ -115,7 +114,6 @@ func (f *Features) ToMap() map[string]any {
 	return map[string]any{
 		"ldap":                        *f.LDAP,
 		"ldap_groups":                 *f.LDAPGroups,
-		"mfa":                         *f.MFA,
 		"google":                      *f.GoogleOAuth,
 		"office365":                   *f.Office365OAuth,
 		"openid":                      *f.OpenId,
@@ -157,10 +155,6 @@ func (f *Features) SetDefaults() {
 
 	if f.LDAPGroups == nil {
 		f.LDAPGroups = NewBool(*f.FutureFeatures)
-	}
-
-	if f.MFA == nil {
-		f.MFA = NewBool(*f.FutureFeatures)
 	}
 
 	if f.GoogleOAuth == nil {
