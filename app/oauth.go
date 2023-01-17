@@ -607,6 +607,7 @@ func (a *App) LoginByOAuth(c *request.Context, service string, userData io.Reade
 
 	user, err := a.GetUserByAuth(model.NewString(*authUser.AuthData), service)
 	if err != nil {
+		fmt.Println(err)
 		if err.Id == MissingAuthAccountError {
 			user, err = a.CreateOAuthUser(c, service, bytes.NewReader(buf.Bytes()), teamID, tokenUser)
 		} else {
@@ -646,6 +647,8 @@ func (a *App) CompleteSwitchWithOAuth(service string, userData io.Reader, email 
 	}
 
 	ssoUser, err1 := provider.GetUserFromJSON(userData, tokenUser)
+	u, _ := json.Marshal(ssoUser)
+	fmt.Println("printing user from CompleteSwitchWithOAuth", string(u))
 	if err1 != nil {
 		return nil, model.NewAppError("CompleteSwitchWithOAuth", "api.user.complete_switch_with_oauth.parse.app_error",
 			map[string]any{"Service": service}, "", http.StatusBadRequest).Wrap(err1)

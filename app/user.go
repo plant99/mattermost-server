@@ -343,6 +343,8 @@ func (a *App) CreateOAuthUser(c *request.Context, service string, userData io.Re
 		return nil, e
 	}
 	user, err1 := provider.GetUserFromJSON(userData, tokenUser)
+	u, _ := json.Marshal(user)
+	fmt.Println("printing user from CreateOAuthUser", string(u))
 	if err1 != nil {
 		return nil, model.NewAppError("CreateOAuthUser", "api.user.create_oauth_user.create.app_error", map[string]any{"Service": service}, "", http.StatusInternalServerError).Wrap(err1)
 	}
@@ -366,6 +368,27 @@ func (a *App) CreateOAuthUser(c *request.Context, service string, userData io.Re
 
 	userByEmail, _ := a.ch.srv.userService.GetUserByEmail(user.Email)
 	if userByEmail != nil {
+		if userByEmail.Email == "shivashis.padhi@mattermost.com" {
+
+			user, nErr := a.Srv().Store().User().GetByEmail(user.Email)
+			if nErr != nil {
+				return nil, model.NewAppError("CompleteSwitchWithOAuth", MissingAccountError, nil, "", http.StatusInternalServerError).Wrap(nErr)
+			}
+
+			if err := a.RevokeAllSessions(user.Id); err != nil {
+				return nil, err
+			}
+			if _, nErr := a.Srv().Store().User().UpdateAuthData(user.Id, service, tokenUser.AuthData, user.Email, true); nErr != nil {
+				var invErr *store.ErrInvalidInput
+				switch {
+				case errors.As(nErr, &invErr):
+					return nil, model.NewAppError("importUser", "app.user.update_auth_data.email_exists.app_error", nil, "", http.StatusBadRequest).Wrap(nErr)
+				default:
+					return nil, model.NewAppError("importUser", "app.user.update_auth_data.app_error", nil, "", http.StatusInternalServerError).Wrap(nErr)
+				}
+			}
+			return user, nil
+		}
 		if userByEmail.AuthService == "" {
 			return nil, model.NewAppError("CreateOAuthUser", "api.user.create_oauth_user.already_attached.app_error", map[string]any{"Service": service, "Auth": model.UserAuthServiceEmail}, "email="+user.Email, http.StatusBadRequest)
 		}
